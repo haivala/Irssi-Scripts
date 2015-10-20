@@ -13,7 +13,7 @@ use strict;
 
 $VERSION = "2.0";
 %IRSSI = (
-    authors => 'TheH',
+    authors => 'Harri Häivälä',
     contact => 'webmaster\@entropy.fi ',
     name => 'Mchat MYSQL table fetch to IRC',
     description => 'a IRSSI script for accessing an mchat mysql database through IRC',
