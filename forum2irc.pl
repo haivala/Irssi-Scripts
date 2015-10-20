@@ -18,14 +18,14 @@ $VERSION = "2.0";
     name => 'Mchat MYSQL table fetch to IRC',
     description => 'a IRSSI script for accessing an mchat mysql database through IRC',
     license => 'GNU GPL v2 or later',
-    url => 'https://github.com/'
+    url => 'https://github.com/haivala/Irssi-Scripts'
 );
 
 # DATABASE
   my $d = ('database'); #database
   my $u = ('usr'); #user
   my $p = ('pass'); #pass
-  my $t = ('table'); #table
+  my $t = ('table'); #table (not in use yet)
 
 # Change These
   my $baseurl = "http://example.org/phpBB3";
