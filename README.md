@@ -1,2 +1,2 @@
 # Irssi-Scripts
-phpBB3 Integration to Irssi
+phpBB3 and Mchat integration to Irssi
