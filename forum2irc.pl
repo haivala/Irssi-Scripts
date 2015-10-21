@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Change the variables!
+# Change the variables in forum2irc.cfg!
 # ... That's about it, enjoy!
 # 
 use HTML::Entities;
@@ -10,6 +10,9 @@ use Irssi;
 use DBI;
 use vars qw($VERSION %IRSSI);
 use strict;
+
+if ($INC{'forum2irc.cfg'}){ delete $INC{"forum2irc.cfg"}; }
+require 'forum2irc.cfg';
 
 $VERSION = "2.0";
 %IRSSI = (
@@ -21,17 +24,19 @@ $VERSION = "2.0";
     url => 'https://github.com/haivala/Irssi-Scripts'
 );
 
-# DATABASE
-  my $d = ('database'); #database
-  my $u = ('usr'); #user
-  my $p = ('pass'); #pass
-  my $t = ('table'); #table (not in use yet)
-
-# Change These
-  my $baseurl = "http://example.org/phpBB3";
-  my $url = "http://example.org/phpBB3/viewtopic.php?f="; #url echoed to irc
-  my $channel = "#channel"; # Channel to echo stuff (can be nick)
-  my $ownnick = "forumnick"; # Own nick
+# User Variables 
+  my $d = get_database(); 
+  my $u = get_databaseu(); 
+  my $p = get_databasep();
+  my $h = get_databaseh();
+  my $mt = get_phpBB_table_prefix()."mchat"; 
+  my $pu = get_phpBB_table_prefix()."users"; 
+  my $pp = get_phpBB_table_prefix()."posts";
+  my $pf = get_phpBB_table_prefix()."forums";
+  my $baseurl = get_phpBB_base_url();
+  my $url = get_phpBB_viewtopic_url(); 
+  my $channel = get_irc_channel(); 
+  my $ownnick = get_react_nick(); 
 
 #Used Variables
   my $hs = HTML::Strip->new();
@@ -62,25 +67,25 @@ sub chanmsg {
         $howmany = $now-$last;
 
         # Get the messages;
-        $queryFromMchat = $dbh->prepare("(SELECT * FROM phpbb_mchat order by message_id desc limit $howmany) order by message_id asc;");
+        $queryFromMchat = $dbh->prepare("(SELECT * FROM $mt order by message_id desc limit $howmany) order by message_id asc;");
         $exed = $queryFromMchat->execute;
         if ($exed >= 1) {
           while ( @mchat = $queryFromMchat->fetchrow_array() ) {
-            $query = $dbh->prepare("select * from phpbb_users where user_id=$mchat[1]");
+            $query = $dbh->prepare("select * from $pu where user_id=$mchat[1]");
             $exed = $query->execute;
             @users = $query->fetchrow_array();
-            $query = $dbh->prepare("select * from phpbb_posts where post_id=$mchat[9]");
+            $query = $dbh->prepare("select * from $pp where post_id=$mchat[9]");
             $exed = $query->execute;
             @posts = $query->fetchrow_array();
 
             $mcmessage = "$mchat[3]\n";
 
             if (@posts >= 1){ # It's a new Post; Check for forum name
-                $query = $dbh->prepare("select forum_name from phpbb_forums where forum_id=$posts[2]");
+                $query = $dbh->prepare("select forum_name from $pf where forum_id=$posts[2]");
                 $exed = $query->execute;
                 @forum_name = $query->fetchrow_array( );
             
-                if (($mcmessage =~ m/New Reply/) or ($mcmessage =~ m/New Topic/)){ # In any case
+                if (($mcmessage =~ m/New Reply/) or ($mcmessage =~ m/New Topic/) or ($mcmessage =~m/a Quote/)){ # In any case
                     $topic = decode_entities($posts[13]);
                     if ($topic =~ m/Re:/){
                         $topic = substr($topic, 4);
@@ -91,7 +96,7 @@ sub chanmsg {
             }
             else {
               $mcmessage = decode_entities($mcmessage);
-              if ($mcmessage =~ m/viewtopic.php/) {
+              if ($mcmessage =~ m/viewtopic.php/) { # when forums own post is pasted to mChat It has to have whole url in irc
                     $mcmessage =~ s{viewtopic.php}{$baseurl/viewtopic.php}g;
               }
               $mcmessage = $hs->parse( $mcmessage );
@@ -113,7 +118,7 @@ sub init {
             Irssi::print("MYSQL says NO!. Is this script properly configured? Is the mysql server started? BYE BYE! I'll DIE NOW..\n");
             return -1;
     }
-    $query = $dbh->prepare("SELECT count(message_id) FROM phpbb_mchat;");
+    $query = $dbh->prepare("SELECT count(message_id) FROM $mt;");
     $rows = $query->execute;
     @count = $query->fetchrow_array(  );
     return ( "$count[0]");
@@ -123,7 +128,7 @@ sub check {
     if ($status==0) {
         return;
     }
-    $query = $dbh->prepare("SELECT count(message_id) FROM phpbb_mchat;");
+    $query = $dbh->prepare("SELECT count(message_id) FROM $mt;");
     $rows = $query->execute;
     @count = $query->fetchrow_array(  );
     $now = "$count[0]";
@@ -146,7 +151,8 @@ sub checkmysqlconnection {
 }
 
 sub connectmysql {
-    $dbh = DBI->connect("DBI:mysql:$d","$u","$p") or return 0;
+    #Irssi::print("$d, $u , $p");
+    $dbh = DBI->connect("DBI:mysql:$d:$h","$u","$p") or return 0;
     $dbh->{'mysql_enable_utf8'} = 1;
     $dbh->do(qq{SET NAMES 'utf8';});
     $status=1;
