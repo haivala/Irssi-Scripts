@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Change the variables in forum2irc.cfg!
+# Change the variables!
 # ... That's about it, enjoy!
 # 
 use HTML::Entities;
@@ -11,8 +11,8 @@ use DBI;
 use vars qw($VERSION %IRSSI);
 use strict;
 
-if ($INC{'forum2irc.cfg'}){ delete $INC{"forum2irc.cfg"}; }
-require 'forum2irc.cfg';
+if ($INC{'config.pl'}){ delete $INC{"config.pl"}; }
+require 'config.pl';
 
 $VERSION = "2.0";
 %IRSSI = (
@@ -36,7 +36,7 @@ $VERSION = "2.0";
   my $baseurl = get_phpBB_base_url();
   my $url = get_phpBB_viewtopic_url(); 
   my $channel = get_irc_channel(); 
-  my $ownnick = get_react_nick(); 
+  my $cmd = get_react_cmd(); 
 
 #Used Variables
   my $hs = HTML::Strip->new();
@@ -162,11 +162,12 @@ sub connectmysql {
 sub msgfromirc { #If someone sends message from IRC to mchat don't echo that to the channel
 	my ($server, $data, $nick, $mask, $target) =@_;
 	my ($ircnick, $text) = $data =~ /^(\S*)\s:(.*)/;
-	  if ($text =~ /^$ownnick[:,\;\-] */i ) {
+	  if ($text =~ /^$cmd[:,\;\-] */i ) {
 		$last=$now=$last+1;
         #$server->command ( "msg $channel script:forum2irc funtion:msgfromirc last: $last now: $now");
 	  }	
 }
+
 
 Irssi::signal_add('event privmsg', 'msgfromirc');
 Irssi::signal_add('server event', 'chanmsg');

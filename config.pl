@@ -26,6 +26,6 @@ sub get_phpBB_viewtopic_url { return "http://example.org/phpBB3/viewtopic.php?p=
 sub get_irc_channel { return "#example"; }
 
 # nick/identifier to react when someone is sending message from IRC to mChat (uses another script to actually do that)
-sub get_react_nick { return "myforumnick"; } 
+sub get_react_cmd { return "myforumnick"; } 
 1;
 
