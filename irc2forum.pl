@@ -24,7 +24,7 @@ $VERSION = "1.0";
     name => 'IRC to mChat integration',
     description => 'a script for accessing an mchat mysql database through irc',
     license => 'tell me if you use it?',
-    url => 'https://github.com/haivala/Irssi-Scripts'
+    url => 'https://github.com/haivala/mChat-Irssi-Scripts'
 );
 
   my $d = get_database();

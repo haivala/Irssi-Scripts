@@ -21,7 +21,7 @@ $VERSION = "2.0";
     name => 'Mchat MYSQL table fetch to IRC',
     description => 'a IRSSI script for accessing an mchat mysql database through IRC',
     license => 'GNU GPL v2 or later',
-    url => 'https://github.com/haivala/Irssi-Scripts'
+    url => 'https://github.com/haivala/mChat-Irssi-Scripts'
 );
 
 # User Variables 
