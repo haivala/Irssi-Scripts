@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 #
 # In phpBB you need to make custom profile field called "irc_nick" this to work.
-# It's used to check if the nick is user of the forum. Otherwise anyone could send messages to mChat
 # ... That's about it, enjoy!
 # 
 
@@ -9,10 +8,10 @@
 use warnings;
 use Irssi;
 use DBI;
+use strict;
 
 use utf8;
 use encoding 'utf8';
-use Text::Iconv;
 use vars qw($VERSION %IRSSI);
 
 if ($INC{'config.pl'}){ delete $INC{"config.pl"}; }
@@ -36,7 +35,7 @@ $VERSION = "1.0";
 
   # Variables
   my ($dbh, $mes2f, $query, $exec, $t, $ip, $text);
-  my (@user, @nicksearc);
+  my (@users, @nicksearch);
 
 sub msg2forum { 
   my ($server, $data, $nick, $mask, $target) =@_;
@@ -65,7 +64,7 @@ sub msg2forum {
             #$server->command ( "msg $nick viesti menny forumille");
 		}
  	}
- 	elsif ($exec == 0) {  $server->command ( "msg $nick You have to set right IRC nick to your profile settings in the phpBB forum!"); }
+    elsif ($exec == 0) {  $server->command ( "msg $nick You have to set right IRC nick to your profile settings in the phpBB forum!"); }
  }
  else { }
 }
