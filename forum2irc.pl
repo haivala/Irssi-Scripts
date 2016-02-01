@@ -74,7 +74,7 @@ sub chanmsg {
             $query = $dbh->prepare("select * from $pu where user_id=$mchat[1]");
             $exed = $query->execute;
             @users = $query->fetchrow_array();
-            $query = $dbh->prepare("select * from $pp where post_id=$mchat[9]");
+            $query = $dbh->prepare("select * from $pp where post_id=$mchat[10]");
             $exed = $query->execute;
             @posts = $query->fetchrow_array();
 
@@ -91,7 +91,7 @@ sub chanmsg {
                         $topic = substr($topic, 4);
                     }
                     @forum_name = decode_entities($forum_name[0]);
-                    $messageToIRC = "\x02Forum\x02: @forum_name \x02Post\x02: $topic | $url$mchat[9]";
+                    $messageToIRC = "\x02Forum\x02: @forum_name \x02Post\x02: $topic | $url$mchat[10]";
                 }
             }
             else {
